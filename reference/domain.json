@@ -1,0 +1,10 @@
+{
+  "event_types": ["membership_due", "sponsor_receipt", "payroll", "refund", "investment_order", "maturity"],
+  "investment_states": ["proposed", "approved", "blocked", "settled"],
+  "currencies": [
+    "CNY",
+    "HKD",
+    "USD"
+  ],
+  "quantity_precision": 6
+}
