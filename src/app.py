@@ -1,31 +1,38 @@
+"""服务装配：事件日志(.runtime/events.log) + 服务 + HTTP。"""
 from __future__ import annotations
 
-import json
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import os
+from http.server import ThreadingHTTPServer
+from pathlib import Path
 
-SERVICE_NAME = '体育俱乐部现金头寸与投资闸门'
+from cashgate.common import Clock
+from cashgate.events import EventStore
+from cashgate.http import create_handler_class, health_payload
+from cashgate.service import CashGateService
+
+RUNTIME_DIR = Path(os.getenv("RUNTIME_DIR", ".runtime"))
+EVENT_LOG = RUNTIME_DIR / "events.log"
+
+_service: CashGateService | None = None
 
 
-def health_payload() -> dict[str, str]:
-    return {"status": "ok", "service": SERVICE_NAME}
+def build_service(event_log: str | Path | None = None, autostart_worker: bool = True) -> CashGateService:
+    global _service
+    store = EventStore(event_log or EVENT_LOG, Clock())
+    service = CashGateService(store, Clock())
+    if autostart_worker:
+        service.start_worker()
+    _service = service
+    return service
 
 
-class RequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self) -> None:
-        if self.path != "/health":
-            self.send_error(404, "Not Found")
-            return
-
-        body = json.dumps(health_payload(), ensure_ascii=False).encode("utf-8")
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
-
-    def log_message(self, format: str, *args: object) -> None:
-        return
+def get_service() -> CashGateService:
+    if _service is None:
+        return build_service()
+    return _service
 
 
 def create_server(host: str, port: int) -> ThreadingHTTPServer:
-    return ThreadingHTTPServer((host, port), RequestHandler)
+    service = get_service()
+    handler = create_handler_class(service)
+    return ThreadingHTTPServer((host, port), handler)

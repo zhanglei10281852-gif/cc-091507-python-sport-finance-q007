@@ -1,10 +1,38 @@
 {
-  "event_types": ["membership_due", "sponsor_receipt", "payroll", "refund", "investment_order", "maturity"],
-  "investment_states": ["proposed", "approved", "blocked", "settled"],
+  "event_types": [
+    "account.registered",
+    "statement.line_recorded",
+    "inflow.scheduled",
+    "contract.signed",
+    "payroll.scheduled",
+    "refund.scheduled",
+    "refund.reserve_set",
+    "product.defined",
+    "assumptions.versioned",
+    "order.proposed",
+    "order.approved",
+    "order.blocked",
+    "alert.raised",
+    "alert.resolved",
+    "risk.evaluated"
+  ],
+  "scenarios": ["base", "adverse", "stress"],
+  "investment_states": ["proposed", "approved", "blocked", "settled", "matured"],
+  "alert_kinds": ["gate_blocked", "liquidity_gap"],
+  "statement_ref_types": [
+    "membership_due",
+    "sponsor_receipt",
+    "contract",
+    "payroll",
+    "refund",
+    "investment_order",
+    "investment_maturity"
+  ],
   "currencies": [
     "CNY",
     "HKD",
     "USD"
   ],
-  "quantity_precision": 6
+  "quantity_precision": 6,
+  "money_unit": "integer_cents"
 }
