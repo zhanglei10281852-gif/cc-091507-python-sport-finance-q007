@@ -1,6 +1,15 @@
 {
-  "event_types": ["membership_due", "sponsor_receipt", "payroll", "refund", "investment_order", "maturity"],
-  "investment_states": ["proposed", "approved", "blocked", "settled"],
+  "event_types": [
+    "membership_due",
+    "sponsor_receipt",
+    "payroll",
+    "refund",
+    "tournament_fee",
+    "investment_order",
+    "maturity"
+  ],
+  "investment_states": ["proposed", "approved", "blocked", "settled", "matured"],
+  "scenarios": ["base", "worst"],
   "currencies": [
     "CNY",
     "HKD",
